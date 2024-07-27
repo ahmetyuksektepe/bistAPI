@@ -2,7 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 from flask import Flask, json, request, jsonify
 from flask_caching import Cache
-import yfinance as yf
 
 app = Flask(__name__)
 
