@@ -3,7 +3,6 @@ import requests
 from flask import Flask, json, request, jsonify
 from flask_caching import Cache
 import yfinance as yf
-import stockSymbols
 
 app = Flask(__name__)
 
@@ -51,7 +50,7 @@ def home_page():
     json_dump = json.dumps(data_set)
     return json_dump
 
-
+'''
 #yfinance verileri grafik için çekmek zahmetli ve verimsiz olabilir
 @app.route('/hist/', methods=['GET'])
 @cache.cached(timeout=3)
@@ -68,6 +67,6 @@ def history_page():
     
     json_dump = json.dumps(data_set)
     return json_dump
-
+'''
 if __name__ == '__main__':
     app.run(port=8080)
