@@ -10,6 +10,7 @@ cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
 cache.init_app(app)
 
 URL = "https://borsa.doviz.com/hisseler"
+hisse_list = []
 
 def hisse_temel():
     result = requests.get(URL)
@@ -17,7 +18,6 @@ def hisse_temel():
     tbody = doc.tbody
     trs = tbody.find_all("tr")
     
-    hisse_list = []
     for tr in trs:
         td_list = tr.find_all("td")[1:7]
         if len(td_list) == 6:
