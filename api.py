@@ -24,6 +24,7 @@ def hisse_temel():
         if len(td_list) == 6:
             anlik, yuksek, dusuk, hacim, degisim, saat = td_list
             hisse_adi = tr['data-name'].split('-')
+            icon = tr.find('img')['src']
             hisse = {
                 "Hisse Adi": hisse_adi[1],
                 "Hisse_Kodu": hisse_adi[0],
@@ -32,7 +33,8 @@ def hisse_temel():
                 "Dusuk": dusuk.text.strip(),
                 "Hacim": hacim.text.strip(),
                 "Degisim": degisim.text.strip(),
-                "Saat": saat.text.strip()
+                "Saat": saat.text.strip(),
+                "Icon": icon.strip()
             }
             hisse_list.append(hisse)
     return hisse_list
