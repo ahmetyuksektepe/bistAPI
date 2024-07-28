@@ -13,6 +13,7 @@ URL = "https://borsa.doviz.com/hisseler"
 hisse_list = []
 
 def hisse_temel():
+    hisse_list.clear()
     result = requests.get(URL)
     doc = BeautifulSoup(result.text, "html.parser")
     tbody = doc.tbody
