@@ -2,8 +2,13 @@ from bs4 import BeautifulSoup
 import requests
 from flask import Flask, json, request, jsonify
 from flask_caching import Cache
+from flask_cors import CORS
+from flask_compress import Compress
 
 app = Flask(__name__)
+CORS(app)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
+Compress(app)
 
 # Önbellekleme yapılandırması
 cache = Cache(config={'CACHE_TYPE': 'SimpleCache'})
@@ -39,36 +44,19 @@ def hisse_temel():
             hisse_list.append(hisse)
     return hisse_list
 
-@app.route('/hisse-temel', methods=['GET'])
-@cache.cached(timeout=3)  # Önbelleği 3sn için ayarla
-def hisse_temel_endpoint():
-    hisse_data = hisse_temel()
-    return jsonify(hisse_data)
-
 @app.route('/', methods=['GET'])
 @cache.cached(timeout=3)  # Önbelleği 3sn için ayarla
-def home_page():
-    data_set = hisse_temel()
-    json_dump = json.dumps(data_set)
-    return json_dump
+def hisse_temel_endpoint():
+    try:
+        hisse_data = hisse_temel()
+        return jsonify(hisse_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-'''
-#yfinance verileri grafik için çekmek zahmetli ve verimsiz olabilir
-@app.route('/hist/', methods=['GET'])
-@cache.cached(timeout=3)
-def history_page():
-    data_set = {}
-    
-    for symbol in stockSymbols.stock_symbols:
-        try:
-            ticker = yf.Ticker(symbol)
-            hist = ticker.history(period="1mo")
-            data_set[symbol] = hist.to_dict()
-        except Exception as e:
-            data_set[symbol] = {'error': str(e)}
-    
-    json_dump = json.dumps(data_set)
-    return json_dump
-'''
+@app.route('/test', methods=['GET'])
+def test_enpoint():
+    hisse_data = hisse_temel()[:5]  # İlk 5 hisseyi al
+    return jsonify(hisse_data)
+
 if __name__ == '__main__':
-    app.run(port=8080)
+    app.run(port=8080, debug=True)
