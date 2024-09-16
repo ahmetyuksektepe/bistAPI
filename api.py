@@ -17,7 +17,7 @@ cache.init_app(app)
 URL = "https://borsa.doviz.com/hisseler"
 hisse_list = []
 
-def hisse_temel(page=1, limit=20):
+def hisse_temel(page=1, limit=20,attribute = None):
     hisse_list.clear()
     result = requests.get(URL)
     doc = BeautifulSoup(result.text, "html.parser")
@@ -41,7 +41,10 @@ def hisse_temel(page=1, limit=20):
                 "Saat": saat.text.strip(),
                 "Icon": icon.strip()
             }
-            hisse_list.append(hisse)
+            if attribute != None:
+                hisse_list.append(hisse[attribute])
+            else:
+                hisse_list.append(hisse)
     
     # Veriyi sayfalara böl ve istenen sayfayı döndür
     start_index = (page - 1) * limit
@@ -73,7 +76,10 @@ def test_enpoint():
 @cache.cached(timeout=3)  # Fiyatlar için de önbellek ekleyelim
 def fiyat_endpoint():
     try:
-        hisse_data = hisse_fiyatlar()
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 20))
+        
+        hisse_data = hisse_temel(page=page, limit=limit,attribute="Anlik fiyat")
         return jsonify(hisse_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
