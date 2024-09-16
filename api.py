@@ -17,7 +17,7 @@ cache.init_app(app)
 URL = "https://borsa.doviz.com/hisseler"
 hisse_list = []
 
-def hisse_fiyatlar(page=1, limit=20):
+def hisse_temel(page=1, limit=20):
     hisse_list.clear()
     result = requests.get(URL)
     doc = BeautifulSoup(result.text, "html.parser")
@@ -73,7 +73,7 @@ def test_enpoint():
 @cache.cached(timeout=3)  # Fiyatlar için de önbellek ekleyelim
 def fiyat_endpoint():
     try:
-        hisse_data = hisse_fiyatlar()
+        hisse_data = hisse_temel()
         return jsonify(hisse_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
