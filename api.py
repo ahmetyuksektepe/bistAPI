@@ -17,13 +17,13 @@ cache.init_app(app)
 URL = "https://borsa.doviz.com/hisseler"
 hisse_list = []
 
-def hisse_temel():
+def hisse_temel(page=1, limit=20):
     hisse_list.clear()
     result = requests.get(URL)
     doc = BeautifulSoup(result.text, "html.parser")
     tbody = doc.tbody
     trs = tbody.find_all("tr")
-    
+
     for tr in trs:
         td_list = tr.find_all("td")[1:7]
         if len(td_list) == 6:
@@ -42,17 +42,28 @@ def hisse_temel():
                 "Icon": icon.strip()
             }
             hisse_list.append(hisse)
-    return hisse_list
+    
+    # Veriyi sayfalara böl ve istenen sayfayı döndür
+    start_index = (page - 1) * limit
+    end_index = start_index + limit
+    return hisse_list[start_index:end_index]
 
 @app.route('/', methods=['GET'])
 @cache.cached(timeout=3)  # Önbelleği 3sn için ayarla
+
 def hisse_temel_endpoint():
     try:
-        hisse_data = hisse_temel()
+        # İstekten page ve limit parametrelerini al
+        page = int(request.args.get('page', 1))
+        limit = int(request.args.get('limit', 20))
+        
+        hisse_data = hisse_temel(page=page, limit=limit)
         return jsonify(hisse_data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
 
+    
 @app.route('/test', methods=['GET'])
 def test_enpoint():
     hisse_data = hisse_temel()[:5]  # İlk 5 hisseyi al
