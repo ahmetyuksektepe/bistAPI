@@ -17,7 +17,7 @@ cache.init_app(app)
 URL = "https://borsa.doviz.com/hisseler"
 hisse_list = []
 
-def hisse_temel(page=1, limit=20):
+def hisse_fiyatlar(page=1, limit=20):
     hisse_list.clear()
     result = requests.get(URL)
     doc = BeautifulSoup(result.text, "html.parser")
