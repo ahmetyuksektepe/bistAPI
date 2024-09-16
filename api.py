@@ -58,5 +58,14 @@ def test_enpoint():
     hisse_data = hisse_temel()[:5]  # İlk 5 hisseyi al
     return jsonify(hisse_data)
 
+@app.route('/fiyatlar', methods=['GET'])
+@cache.cached(timeout=3)  # Fiyatlar için de önbellek ekleyelim
+def fiyat_endpoint():
+    try:
+        hisse_data = hisse_fiyatlar()
+        return jsonify(hisse_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(port=8080, debug=True)
