@@ -1,2 +1,2 @@
 # borsaAPI
-Borsa için API çalışması
+BIST için API çalışması
